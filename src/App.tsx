@@ -190,8 +190,8 @@ export function App() {
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-800">Maharashtra Mobile</span>
               <span>•</span>
-              <span className="font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                Formula simulation: CC =SUM(C8:C1004) | PP =SUM(D8:D1004) | GT =E4+F4
+              <span className="font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                ABHR Digital Ledger System
               </span>
             </div>
             <div>

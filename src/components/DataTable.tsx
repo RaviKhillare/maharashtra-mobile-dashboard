@@ -670,7 +670,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tfoot>
               <tr className="bg-amber-100/90 text-amber-950 font-bold border-t-2 border-amber-400 text-xs">
                 <td colSpan={3} className="py-2 px-3 border-r border-amber-300 text-right">
-                  <span className="font-mono text-[11px] font-bold">TOTALS (Rows 8:1004):</span>
+                  <span className="font-mono text-[11px] font-bold">CONSOLIDATED TOTALS:</span>
                 </td>
 
                 <td className="py-2 px-2.5 text-right border-r border-amber-300 font-mono bg-amber-200/60 font-extrabold text-amber-950 text-xs">
