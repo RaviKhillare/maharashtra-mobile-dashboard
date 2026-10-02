@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { SheetEntry } from '../types';
 import { formatINR } from '../utils/formatters';
 import { 
   PlusCircle, 
-  ChevronDown,
-  ChevronUp,
-  Tag,
-  CheckCircle2,
-  X,
-  Sparkles,
-  Lock,
-  Unlock
+  ChevronDown, 
+  ChevronUp, 
+  Tag, 
+  CheckCircle2, 
+  X 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -44,21 +41,12 @@ export const EntryForm: React.FC<EntryFormProps> = ({
   isOpenDefault = true
 }) => {
   const [isExpanded, setIsExpanded] = useState(isOpenDefault);
-  const [no, setNo] = useState<number>(nextSuggestedNo);
-  const [isManualNo, setIsManualNo] = useState(false);
   const [subject, setSubject] = useState('');
   const [cc, setCc] = useState<string>('');
   const [pp, setPp] = useState<string>('');
   const [baki, setBaki] = useState('');
   const [date] = useState(() => new Date().toISOString().split('T')[0]);
   const [error, setError] = useState<string | null>(null);
-
-  // Auto-generate and sync Sr. No. whenever nextSuggestedNo changes
-  useEffect(() => {
-    if (!isManualNo) {
-      setNo(nextSuggestedNo);
-    }
-  }, [nextSuggestedNo, isManualNo]);
 
   const numCc = parseFloat(cc) || 0;
   const numPp = parseFloat(pp) || 0;
@@ -73,10 +61,9 @@ export const EntryForm: React.FC<EntryFormProps> = ({
       return;
     }
 
-    const assignedNo = isManualNo ? (Number(no) || nextSuggestedNo) : nextSuggestedNo;
-
+    // Automatically assign the next sequential serial number behind the scenes
     const newEntry: Omit<SheetEntry, 'id'> = {
-      no: assignedNo,
+      no: nextSuggestedNo,
       subject: subject.trim(),
       cc: numCc,
       pp: numPp,
@@ -97,13 +84,11 @@ export const EntryForm: React.FC<EntryFormProps> = ({
       // ignore
     }
 
-    // Reset form for next entry & auto-increment Sr. No.
+    // Reset form for next entry
     setSubject('');
     setCc('');
     setPp('');
     setBaki('');
-    setIsManualNo(false);
-    setNo(assignedNo + 1);
 
     if (keepFocus) {
       setTimeout(() => {
@@ -114,8 +99,6 @@ export const EntryForm: React.FC<EntryFormProps> = ({
   };
 
   const handleReset = () => {
-    setIsManualNo(false);
-    setNo(nextSuggestedNo);
     setSubject('');
     setCc('');
     setPp('');
@@ -134,15 +117,9 @@ export const EntryForm: React.FC<EntryFormProps> = ({
           <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-orange-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
             <PlusCircle className="w-3.5 h-3.5" />
           </div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs sm:text-sm font-bold text-slate-800 m-0">
-              New Entry
-            </h3>
-            <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold flex items-center gap-1">
-              <Sparkles className="w-2.5 h-2.5" />
-              Sr. #{no} Auto
-            </span>
-          </div>
+          <h3 className="text-xs sm:text-sm font-bold text-slate-800 m-0">
+            New Entry
+          </h3>
         </div>
 
         <div className="flex items-center gap-2">
@@ -168,48 +145,12 @@ export const EntryForm: React.FC<EntryFormProps> = ({
             </div>
           )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-12 gap-2 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-4">
             
-            {/* 1. Sr. No. (100% Auto-Generated) */}
-            <div className="col-span-1 sm:col-span-2">
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1 flex items-center justify-between">
-                <span>Sr. No.</span>
-                <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">
-                  {isManualNo ? 'MANUAL' : 'AUTO'}
-                </span>
-              </label>
-              
-              <div className="relative">
-                <input
-                  type="number"
-                  value={no}
-                  readOnly={!isManualNo}
-                  onChange={(e) => setNo(parseInt(e.target.value, 10) || 1)}
-                  min="1"
-                  required
-                  className={`w-full pl-2.5 pr-6 py-1.5 text-xs sm:text-sm border rounded-lg font-mono font-bold transition-all ${
-                    isManualNo 
-                      ? 'bg-white border-amber-400 text-slate-900 focus:ring-2 focus:ring-amber-500' 
-                      : 'bg-slate-100/90 border-slate-200 text-slate-700 cursor-default select-none'
-                  }`}
-                  title={isManualNo ? "Manual Sr. No. editing" : "Auto-generated Sr. No."}
-                />
-                
-                <button
-                  type="button"
-                  onClick={() => setIsManualNo(!isManualNo)}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-0.5"
-                  title={isManualNo ? "Switch back to Auto" : "Click to manually edit Sr. No."}
-                >
-                  {isManualNo ? <Unlock className="w-3 h-3 text-amber-600" /> : <Lock className="w-3 h-3" />}
-                </button>
-              </div>
-            </div>
-
-            {/* 2. Subject */}
-            <div className="col-span-2 sm:col-span-4 order-last sm:order-none">
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1 flex justify-between">
-                <span>Subject / Work</span>
+            {/* 1. Subject (Takes prominent space without serial number input) */}
+            <div className="sm:col-span-5">
+              <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex justify-between">
+                <span>Subject / Work Description</span>
                 <span className="text-[10px] text-amber-700 font-normal">e.g. love Bar sound</span>
               </label>
               <input
@@ -217,15 +158,15 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="Item / service description..."
+                placeholder="Enter item or service name..."
                 required
                 autoFocus
-                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-hidden text-slate-900 placeholder:text-slate-400"
+                className="w-full px-3 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-hidden text-slate-900 placeholder:text-slate-400"
               />
             </div>
 
-            {/* 3. CC (Green Accent) */}
-            <div className="col-span-1 sm:col-span-2">
+            {/* 2. CC (Green Accent) */}
+            <div className="sm:col-span-2">
               <label className="block text-[11px] font-semibold text-emerald-800 mb-1 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>CC (₹)</span>
@@ -236,12 +177,12 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 value={cc}
                 onChange={(e) => setCc(e.target.value)}
                 placeholder="0"
-                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-emerald-50/50 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-emerald-900"
+                className="w-full px-3 py-1.5 text-xs sm:text-sm bg-emerald-50/50 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-emerald-900"
               />
             </div>
 
-            {/* 4. PP (Orange Accent) */}
-            <div className="col-span-1 sm:col-span-2">
+            {/* 3. PP (Orange Accent) */}
+            <div className="sm:col-span-2">
               <label className="block text-[11px] font-semibold text-orange-800 mb-1 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
                 <span>PP (₹)</span>
@@ -252,21 +193,21 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 value={pp}
                 onChange={(e) => setPp(e.target.value)}
                 placeholder="0"
-                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-orange-50/50 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 font-mono font-bold text-orange-900"
+                className="w-full px-3 py-1.5 text-xs sm:text-sm bg-orange-50/50 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 font-mono font-bold text-orange-900"
               />
             </div>
 
-            {/* 5. Baki */}
-            <div className="col-span-1 sm:col-span-2">
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+            {/* 4. Baki */}
+            <div className="sm:col-span-3">
+              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
                 Baki / Notes
               </label>
               <input
                 type="text"
                 value={baki}
                 onChange={(e) => setBaki(e.target.value)}
-                placeholder="Status..."
-                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                placeholder="Paid / Baki 200..."
+                className="w-full px-3 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
