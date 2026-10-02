@@ -3,9 +3,11 @@ import type { SheetEntry } from '../types';
 import { formatINR } from '../utils/formatters';
 import { 
   PlusCircle, 
-  Tag, 
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Tag,
+  CheckCircle2,
+  X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -17,22 +19,20 @@ interface EntryFormProps {
 
 const COMMON_SUBJECT_SUGGESTIONS = [
   'love Bar sound',
-  'Display Combo + Glass',
-  'C-Type Charging Jack',
-  'Battery Replacement Org',
-  'Mic & Ringer Sound Repair',
-  'OCA Glass Lamination',
-  'CPU Reballing Work',
-  'Tempered & Back Cover Combo'
+  'Display Combo',
+  'C-Type Pin',
+  'Battery Org',
+  'Mic & Ringer',
+  'OCA Glass',
+  'IC Reballing'
 ];
 
 const BAKI_QUICK_TAGS = [
   'Clear',
   'Paid UPI',
-  'Cash Paid',
+  'Cash',
   'Baki 200',
-  'Baki 500',
-  'Pending Delivery'
+  'Baki 500'
 ];
 
 export const EntryForm: React.FC<EntryFormProps> = ({
@@ -63,7 +63,7 @@ export const EntryForm: React.FC<EntryFormProps> = ({
     setError(null);
 
     if (!subject.trim()) {
-      setError('Please provide a Subject (e.g., "love Bar sound" or service description).');
+      setError('Please enter a Subject (e.g. "love Bar sound")');
       return;
     }
 
@@ -78,19 +78,18 @@ export const EntryForm: React.FC<EntryFormProps> = ({
 
     onAddEntry(newEntry);
 
-    // Subtle celebratory confetti
     try {
       confetti({
-        particleCount: 25,
-        spread: 60,
-        origin: { y: 0.8 },
+        particleCount: 20,
+        spread: 50,
+        origin: { y: 0.85 },
         colors: ['#ea580c', '#f59e0b', '#10b981', '#dc2626']
       });
     } catch {
       // ignore
     }
 
-    // Reset form for next entry
+    // Reset form
     setSubject('');
     setCc('');
     setPp('');
@@ -113,36 +112,33 @@ export const EntryForm: React.FC<EntryFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xs mb-6 overflow-hidden transition-all">
+    <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs mb-3 sm:mb-6 overflow-hidden transition-all">
       {/* Header bar / Toggle */}
       <div 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="px-5 py-3.5 bg-gradient-to-r from-amber-50/60 via-orange-50/30 to-white border-b border-slate-200 flex items-center justify-between cursor-pointer select-none"
+        className="px-3 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-amber-50/70 via-orange-50/30 to-white border-b border-slate-200 flex items-center justify-between cursor-pointer select-none"
       >
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-            <PlusCircle className="w-4 h-4" />
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-orange-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
+            <PlusCircle className="w-3.5 h-3.5" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-800 m-0 flex items-center gap-2">
-              Add New Sheet Entry
-              <span className="text-[11px] font-normal text-slate-500 font-mono">
-                (Row #{no})
-              </span>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 m-0">
+              New Entry
             </h3>
-            <p className="text-[11px] text-slate-500 m-0">
-              Input No, Subject, CC, PP, and Baki status. Auto-adds to live totals.
-            </p>
+            <span className="text-[10px] font-mono text-slate-500 bg-white/80 px-1.5 py-0.2 rounded border border-slate-200">
+              #{no}
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono font-medium text-slate-500 hidden sm:inline">
-            Press <kbd className="bg-slate-100 border border-slate-300 px-1 py-0.5 rounded text-[10px]">Enter</kbd> to submit
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+            Enter ↵
           </span>
           <button 
             type="button" 
-            className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+            className="text-slate-400 hover:text-slate-600 p-0.5"
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -151,20 +147,20 @@ export const EntryForm: React.FC<EntryFormProps> = ({
 
       {/* Form Content */}
       {isExpanded && (
-        <form onSubmit={(e) => handleSubmit(e, true)} className="p-5">
+        <form onSubmit={(e) => handleSubmit(e, true)} className="p-3 sm:p-5">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center gap-2">
-              <span className="font-bold">Error:</span> {error}
+            <div className="mb-3 p-2 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center justify-between">
+              <span>{error}</span>
+              <button onClick={() => setError(null)}><X className="w-3.5 h-3.5" /></button>
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-12 gap-2 sm:gap-4">
             
-            {/* 1. Row No. (Editable & Auto-incremented) */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
-                <span>No.</span>
-                <span className="text-[10px] text-slate-400 font-mono">Auto / Edit</span>
+            {/* 1. No. (Small) */}
+            <div className="col-span-1 sm:col-span-2">
+              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                No.
               </label>
               <input
                 type="number"
@@ -172,35 +168,32 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 onChange={(e) => setNo(parseInt(e.target.value, 10) || 1)}
                 min="1"
                 required
-                className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-hidden font-mono font-semibold text-slate-800"
+                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 font-mono font-bold text-slate-800"
               />
             </div>
 
-            {/* 2. Subject (Text field, e.g. "love Bar sound") */}
-            <div className="sm:col-span-4">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
-                <span>Subject / Work Description</span>
-                <span className="text-[10px] text-amber-700 font-medium">e.g. "love Bar sound"</span>
+            {/* 2. Subject */}
+            <div className="col-span-2 sm:col-span-4 order-last sm:order-none">
+              <label className="block text-[11px] font-semibold text-slate-600 mb-1 flex justify-between">
+                <span>Subject</span>
+                <span className="text-[10px] text-amber-700 font-normal">e.g. love Bar sound</span>
               </label>
               <input
                 id="entry-subject-input"
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g. love Bar sound, Display replacement..."
+                placeholder="Item / service..."
                 required
-                className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-hidden text-slate-900 placeholder:text-slate-400"
+                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-hidden text-slate-900 placeholder:text-slate-400"
               />
             </div>
 
-            {/* 3. CC (Numeric entry - Defined green accent) */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-emerald-800 mb-1.5 flex items-center justify-between">
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                  CC (₹)
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono">Col C</span>
+            {/* 3. CC (Green Accent) */}
+            <div className="col-span-1 sm:col-span-2">
+              <label className="block text-[11px] font-semibold text-emerald-800 mb-1 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>CC (₹)</span>
               </label>
               <input
                 type="number"
@@ -208,18 +201,15 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 value={cc}
                 onChange={(e) => setCc(e.target.value)}
                 placeholder="0"
-                className="w-full px-3 py-2 text-sm bg-emerald-50/40 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:outline-hidden font-mono font-bold text-emerald-900 placeholder:text-emerald-300"
+                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-emerald-50/50 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-emerald-900"
               />
             </div>
 
-            {/* 4. PP (Numeric entry - Defined contrasting accent) */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-orange-800 mb-1.5 flex items-center justify-between">
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />
-                  PP (₹)
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono">Col D</span>
+            {/* 4. PP (Orange Accent) */}
+            <div className="col-span-1 sm:col-span-2">
+              <label className="block text-[11px] font-semibold text-orange-800 mb-1 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                <span>PP (₹)</span>
               </label>
               <input
                 type="number"
@@ -227,90 +217,80 @@ export const EntryForm: React.FC<EntryFormProps> = ({
                 value={pp}
                 onChange={(e) => setPp(e.target.value)}
                 placeholder="0"
-                className="w-full px-3 py-2 text-sm bg-orange-50/40 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:bg-white focus:outline-hidden font-mono font-bold text-orange-900 placeholder:text-orange-300"
+                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-orange-50/50 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 font-mono font-bold text-orange-900"
               />
             </div>
 
-            {/* 5. Baki (Text or numeric notes field) */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
-                <span>Baki / Notes</span>
-                <span className="text-[10px] text-slate-400 font-mono">Col E</span>
+            {/* 5. Baki */}
+            <div className="col-span-1 sm:col-span-2">
+              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                Baki / Notes
               </label>
               <input
                 type="text"
                 value={baki}
                 onChange={(e) => setBaki(e.target.value)}
-                placeholder="Paid / Baki 200..."
-                className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-hidden text-slate-800 placeholder:text-slate-400"
+                placeholder="Status..."
+                className="w-full px-2.5 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500"
               />
             </div>
 
           </div>
 
-          {/* Quick suggestions & Live Row Total Calculation Banner */}
-          <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          {/* Micro Chips & Live Row Total Calculation Banner */}
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
             
-            {/* Quick Suggestions Chips */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-slate-400 text-[11px] flex items-center gap-1">
-                <Tag className="w-3 h-3" /> Quick fill:
-              </span>
-              {COMMON_SUBJECT_SUGGESTIONS.slice(0, 4).map((item) => (
+            {/* Quick Fill suggestions */}
+            <div className="flex items-center gap-1 flex-wrap">
+              <Tag className="w-3 h-3 text-slate-400 shrink-0" />
+              {COMMON_SUBJECT_SUGGESTIONS.slice(0, 3).map((item) => (
                 <button
                   type="button"
                   key={item}
                   onClick={() => setSubject(item)}
-                  className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] transition-colors"
+                  className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] transition-colors"
                 >
                   {item}
                 </button>
               ))}
+              {BAKI_QUICK_TAGS.slice(0, 2).map((tag) => (
+                <button
+                  type="button"
+                  key={tag}
+                  onClick={() => setBaki(tag)}
+                  className="px-1.5 py-0.5 rounded border border-slate-200 text-[10px] text-slate-600 hover:border-amber-400"
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
 
-            {/* Live Calculation preview for this row */}
-            <div className="flex items-center gap-3 self-end md:self-center">
-              <div className="flex items-center gap-1.5 font-mono text-xs bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
-                <span className="text-slate-500">Row Total (CC+PP):</span>
+            {/* Live Calculation preview & Tiny buttons */}
+            <div className="flex items-center gap-2 ml-auto">
+              <div className="font-mono text-xs bg-slate-100 px-2 py-1 rounded border border-slate-200 flex items-center gap-1">
+                <span className="text-[10px] text-slate-500">Total:</span>
                 <strong className={`font-bold ${rowGrandTotal > 0 ? 'text-red-700' : 'text-slate-700'}`}>
                   {formatINR(rowGrandTotal)}
                 </strong>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                >
-                  Clear
-                </button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-95 transition-all shadow-xs"
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  Add Entry
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Baki quick status pills */}
-          <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-            <span className="text-slate-400 text-[11px]">Baki presets:</span>
-            {BAKI_QUICK_TAGS.map((tag) => (
               <button
                 type="button"
-                key={tag}
-                onClick={() => setBaki(tag)}
-                className="px-2 py-0.5 rounded-full border border-slate-200 hover:border-amber-400 hover:bg-amber-50 text-[11px] text-slate-600 transition-colors"
+                onClick={handleReset}
+                className="px-2 py-1 text-xs font-medium text-slate-500 hover:text-slate-800"
               >
-                {tag}
+                Clear
               </button>
-            ))}
+
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-95 transition-all shadow-2xs"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Add</span>
+              </button>
+            </div>
+
           </div>
 
         </form>

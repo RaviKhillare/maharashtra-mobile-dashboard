@@ -1,12 +1,10 @@
 import React from 'react';
 import { 
   Smartphone, 
-  FileSpreadsheet, 
   Download, 
   Printer, 
   RotateCcw, 
-  HelpCircle,
-  CheckCircle2,
+  HelpCircle, 
   Plus
 } from 'lucide-react';
 
@@ -30,90 +28,93 @@ export const Header: React.FC<HeaderProps> = ({
   totalCount
 }) => {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between py-3.5 gap-4">
+    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between py-2 sm:py-3 gap-2">
           
-          {/* Brand & Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-sm ring-2 ring-amber-100">
-              <Smartphone className="w-6 h-6" />
+          {/* Brand & Title (Sleek and compact) */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-2xs shrink-0 ring-1 sm:ring-2 ring-amber-100">
+              <Smartphone className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold tracking-tight text-slate-900 m-0">
+            
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h1 className="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 m-0 truncate">
                   Maharashtra Mobile
                 </h1>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300">
-                  ABHR Ledger
-                </span>
-                <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
-                  Rows 8 : 1004
+                <span className="px-1.5 py-0.2 rounded text-[10px] sm:text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+                  ABHR
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                <span className="flex items-center gap-1 text-emerald-600 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  {lastSavedAt ? `Auto-saved at ${lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : 'Live Local Storage'}
-                </span>
+              <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 font-mono mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                <span>{lastSavedAt ? `Saved ${lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Auto-saved'}</span>
                 <span>•</span>
-                <span>{totalCount} active records</span>
+                <span>{totalCount} rows</span>
               </div>
             </div>
           </div>
 
-          {/* Action Toolbar */}
-          <div className="flex items-center flex-wrap gap-2">
+          {/* Menubar with Tiny Buttons & Maximum Icons */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            
+            {/* New Entry Primary Tiny Button */}
             <button
               onClick={onOpenAddRow}
               type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-95 transition-all shadow-xs"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 text-xs font-bold rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-95 transition-all shadow-2xs"
+              title="Add New Row (N)"
             >
-              <Plus className="w-4 h-4" />
-              <span>New Entry</span>
-              <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.2 text-[10px] bg-orange-700/60 rounded text-orange-100 font-mono">
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">Entry</span>
+              <kbd className="hidden md:inline-block ml-0.5 px-1 py-0.2 text-[9px] bg-orange-700/70 rounded font-mono">
                 N
               </kbd>
             </button>
 
+            {/* Export / Import Button */}
             <button
               onClick={onOpenExportImport}
               type="button"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs"
-              title="Import or Export CSV / JSON data"
+              className="inline-flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-semibold rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition-colors shadow-2xs"
+              title="Export to CSV/JSON or Import"
             >
-              <Download className="w-4 h-4 text-slate-500" />
-              <span>Export / Import</span>
+              <Download className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden md:inline">Data</span>
             </button>
 
+            {/* Print Button */}
             <button
               onClick={onPrint}
               type="button"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
-              title="Print or save as PDF"
+              className="inline-flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-semibold rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors shadow-2xs"
+              title="Print Sheet / Save PDF"
             >
-              <Printer className="w-4 h-4 text-slate-500" />
-              <span className="hidden sm:inline">Print</span>
+              <Printer className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden lg:inline">Print</span>
             </button>
 
+            {/* Reset Data Button */}
             <button
               onClick={onResetData}
               type="button"
-              className="inline-flex items-center p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-transparent hover:border-slate-200"
-              title="Reset to default sample entries"
+              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-transparent hover:border-slate-200"
+              title="Reset Sample Data"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
 
+            {/* Help / Formulas Button */}
             <button
               onClick={onOpenHelp}
               type="button"
-              className="inline-flex items-center p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-transparent hover:border-slate-200"
-              title="Help & Google Sheet Formula info"
+              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors border border-transparent hover:border-slate-200"
+              title="Help & Formulas (?)"
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-3.5 h-3.5" />
             </button>
+
           </div>
 
         </div>

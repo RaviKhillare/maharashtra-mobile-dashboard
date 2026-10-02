@@ -10,6 +10,14 @@ import { ImportExportModal } from './components/ImportExportModal';
 import { EditRowModal } from './components/EditRowModal';
 import { HelpModal } from './components/HelpModal';
 import { PrintView } from './components/PrintView';
+import { 
+  Plus, 
+  Search, 
+  Download, 
+  Printer, 
+  HelpCircle,
+  RotateCcw
+} from 'lucide-react';
 
 export function App() {
   const [entries, setEntries] = useState<SheetEntry[]>(() => loadEntries());
@@ -39,7 +47,6 @@ export function App() {
   // Global Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if typing inside an input or textarea
       const target = e.target as HTMLElement;
       const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
 
@@ -121,8 +128,20 @@ export function App() {
     window.print();
   }, []);
 
+  const handleFocusNewEntry = () => {
+    const input = document.getElementById('entry-subject-input');
+    input?.focus();
+    input?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleFocusSearch = () => {
+    const input = document.getElementById('main-search-input');
+    input?.focus();
+    input?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-amber-200 selection:text-amber-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-amber-200 selection:text-amber-900 pb-16 sm:pb-0">
       
       {/* Printable Sheet (hidden during normal display) */}
       <PrintView entries={entries} totals={totals} />
@@ -130,12 +149,9 @@ export function App() {
       {/* Screen App Layout */}
       <div className="print:hidden flex flex-col min-h-screen">
         
-        {/* Navigation & Branding Header */}
+        {/* Navigation & Branding Menubar */}
         <Header
-          onOpenAddRow={() => {
-            const input = document.getElementById('entry-subject-input');
-            input?.focus();
-          }}
+          onOpenAddRow={handleFocusNewEntry}
           onOpenExportImport={() => setIsExportImportOpen(true)}
           onPrint={handlePrint}
           onResetData={handleResetData}
@@ -145,18 +161,18 @@ export function App() {
         />
 
         {/* Main Dashboard Canvas */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-6">
           
-          {/* Top Visual Anchors: Prominent ABHR Header & Color-Coded Summary Cards */}
+          {/* Top Visual Anchors: Micro/Compact on Mobile, Full on Desktop */}
           <SummaryCards totals={totals} />
 
-          {/* New Entry Row Form with auto-calculated row totals */}
+          {/* New Entry Row Form */}
           <EntryForm
             nextSuggestedNo={nextSuggestedNo}
             onAddEntry={handleAddEntry}
           />
 
-          {/* Spreadsheet Data Table with Yellow Header, CC/PP Accents, Search, & Inline Edit */}
+          {/* Spreadsheet Data Table */}
           <DataTable
             entries={entries}
             totals={totals}
@@ -169,22 +185,79 @@ export function App() {
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-slate-200 bg-white py-4 mt-auto">
+        <footer className="border-t border-slate-200 bg-white py-3 mt-auto hidden sm:block">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-800">Maharashtra Mobile</span>
-              <span>•</span>
-              <span>Inspired by Google Sheet ABHR structure</span>
               <span>•</span>
               <span className="font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                 Formula simulation: CC =SUM(C8:C1004) | PP =SUM(D8:D1004) | GT =E4+F4
               </span>
             </div>
             <div>
-              Auto-persisted to Local Storage & Ready for GitHub / Headless CMS
+              Auto-persisted to Local Storage
             </div>
           </div>
         </footer>
+
+        {/* MOBILE BOTTOM ACTION DOCK (Tiny buttons with Maximum Icons) */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-1.5 flex items-center justify-around shadow-lg">
+          <button
+            onClick={handleFocusNewEntry}
+            className="flex flex-col items-center gap-0.5 p-1 text-orange-600 active:scale-95 transition-transform"
+            title="New Entry"
+          >
+            <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center shadow-xs">
+              <Plus className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-bold">New</span>
+          </button>
+
+          <button
+            onClick={handleFocusSearch}
+            className="flex flex-col items-center gap-0.5 p-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
+            title="Search"
+          >
+            <Search className="w-4 h-4" />
+            <span className="text-[10px]">Search</span>
+          </button>
+
+          <button
+            onClick={() => setIsExportImportOpen(true)}
+            className="flex flex-col items-center gap-0.5 p-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
+            title="Export / Import"
+          >
+            <Download className="w-4 h-4" />
+            <span className="text-[10px]">Data</span>
+          </button>
+
+          <button
+            onClick={handlePrint}
+            className="flex flex-col items-center gap-0.5 p-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
+            title="Print Sheet"
+          >
+            <Printer className="w-4 h-4" />
+            <span className="text-[10px]">Print</span>
+          </button>
+
+          <button
+            onClick={handleResetData}
+            className="flex flex-col items-center gap-0.5 p-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
+            title="Reset"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span className="text-[10px]">Reset</span>
+          </button>
+
+          <button
+            onClick={() => setIsHelpOpen(true)}
+            className="flex flex-col items-center gap-0.5 p-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
+            title="Help"
+          >
+            <HelpCircle className="w-4 h-4" />
+            <span className="text-[10px]">Help</span>
+          </button>
+        </div>
 
       </div>
 
